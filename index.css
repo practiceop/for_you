@@ -1,0 +1,299 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;500&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #ff9a9e, #fad0c4, #fecfef, #ff9a9e);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    font-family: 'Quicksand', sans-serif;
+    position: relative;
+    transition: background 0.5s ease;
+    overflow-x: hidden;
+}
+
+.glass-container {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    border-radius: 30px;
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 20px rgba(255, 182, 193, 0.4);
+    text-align: center;
+    animation: float 6s ease-in-out infinite;
+    position: relative;
+    z-index: 10;
+    width: 80%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content-left {
+    flex: 1;
+    text-align: left;
+    padding-right: 30px;
+}
+
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 4em;
+    background: linear-gradient(45deg, #ff6b6b, #ff85a2, #ffa6c9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.btn {
+    font-family: 'Quicksand', sans-serif;
+    padding: 15px 40px;
+    font-size: 1.2em;
+    background: linear-gradient(45deg, #ff85a2, #ffa6c9);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    box-shadow: 0 5px 15px rgba(255, 133, 162, 0.4);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 300px;
+}
+
+.color-btn {
+    background: linear-gradient(45deg, #ff6b6b, #ff85a2);
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 133, 162, 0.6);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.heart {
+    position: absolute;
+    font-size: 1.5rem;
+    pointer-events: none;
+    animation: floatHeart linear forwards;
+    opacity: 0.7;
+    z-index: 5;
+}
+
+.floating-bubble {
+    position: absolute;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatBubble linear infinite;
+    opacity: 0.2;
+    z-index: 1;
+}
+
+.visual-container {
+    flex: 1;
+    position: relative;
+    height: 300px;
+    overflow: visible;
+}
+
+.pookie-visual {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.floating-hearts-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.floating-heart {
+    position: absolute;
+    animation: localFloat 6s ease-in-out infinite;
+    font-size: 2rem;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(0.5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes localFloat {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(10px, -15px) rotate(5deg); }
+    66% { transform: translate(-15px, 5px) rotate(-5deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes floatHeart {
+    0% {
+        transform: translateY(100vh) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(calc(100px - 200px * var(--random-offset))) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes floatBubble {
+    0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(calc(50px - 100px * var(--random-offset)));
+        opacity: 0;
+    }
+}
+
+.subtitle {
+    color: #333;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    font-weight: 400;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.love-msg {
+    position: absolute;
+    bottom: 20px;
+    font-size: 1em;
+    color: #333;
+    opacity: 0.8;
+    font-weight: 400;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+    z-index: 10;
+}
+
+.page-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+    z-index: 1000;
+}
+
+.pookie-corner {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    font-size: 2em;
+    animation: pookiePulse 2s infinite alternate;
+    z-index: 10;
+}
+
+@keyframes pookiePulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2); }
+}
+
+.romantic-sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+    animation: sparkle 4s infinite linear;
+    z-index: 3;
+}
+
+@keyframes sparkle {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .glass-container {
+        flex-direction: column;
+        padding: 30px;
+        width: 90%;
+    }
+    
+    .content-left {
+        padding-right: 0;
+        padding-bottom: 20px;
+        text-align: center;
+    }
+    
+    .btn-container {
+        align-items: center;
+    }
+    
+    .visual-container {
+        height: 200px;
+        width: 100%;
+    }
+    
+    h1 {
+        font-size: 2.5em;
+    }
+}

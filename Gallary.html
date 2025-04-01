@@ -1,0 +1,639 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Gallary.css">
+       
+   <style>
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: linear-gradient(to bottom, #331a54, #7a3070);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        font-family: 'Arial', sans-serif;
+    }
+    .nav-button {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 105, 180, 0.3);
+        border: 2px solid rgba(255, 182, 193, 0.7);
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 0 15px rgba(255, 20, 147, 0.5);
+    }
+    
+    .nav-button:hover {
+        background: rgba(255, 105, 180, 0.6);
+        box-shadow: 
+            0 0 20px rgba(255, 20, 147, 0.7),
+            0 0 40px rgba(255, 20, 147, 0.4);
+    }
+    
+    .nav-button.prev {
+        left: 30px;
+    }
+    
+    .nav-button.next {
+        right: 30px;
+    }
+    
+    .nav-button::before {
+        content: '';
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        border-top: 3px solid white;
+        border-right: 3px solid white;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-button.prev::before {
+        transform: rotate(-135deg);
+        margin-left: 5px;
+    }
+    
+    .nav-button.next::before {
+        transform: rotate(45deg);
+        margin-right: 5px;
+    }
+    
+    .nav-button:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+    
+    .nav-button.active {
+        background: rgba(255, 105, 180, 0.8);
+        box-shadow: 
+            0 0 30px rgba(255, 20, 147, 0.9),
+            0 0 50px rgba(255, 20, 147, 0.6);
+    }
+    
+    @media (max-width: 768px) {
+        .nav-button {
+            width: 40px;
+            height: 40px;
+        }
+        .nav-button::before {
+            width: 12px;
+            height: 12px;
+        }
+    }
+    
+    .spotlight {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        width: 400px;
+        height: 400px;
+        transform: translateX(-50%);
+        background: radial-gradient(circle at center, rgba(255,192,203,0.2) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 2;
+        animation: spotlightPulse 4s infinite;
+    }
+    
+    @keyframes spotlightPulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 0.8; }
+    }
+    
+    .hearts {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    .heart {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: transparent;
+        transform: rotate(-45deg);
+        opacity: 0;
+        animation: heartFloat 20s linear infinite;
+    }
+    
+    .heart::before,
+    .heart::after {
+        content: '';
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: rgba(255, 105, 180, 0.6);
+        border-radius: 50%;
+    }
+    
+    .heart::before {
+        top: -5px;
+        left: 0;
+    }
+    
+    .heart::after {
+        top: 0;
+        left: -5px;
+    }
+    
+    @keyframes heartFloat {
+        0% {
+            transform: translate(0, 0) rotate(-45deg) scale(0);
+            opacity: 0;
+        }
+        10% {
+            opacity: 0.8;
+        }
+        90% {
+            opacity: 0.2;
+        }
+        100% {
+            transform: translate(var(--tx), -100vh) rotate(calc(-45deg + var(--r))) scale(var(--s));
+            opacity: 0;
+        }
+    }
+    
+    .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    .star {
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 1.5s infinite ease-in-out;
+    }
+    
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.2); }
+    }
+    
+    .gallery-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        perspective: 2000px;
+    }
+    
+    .gallery {
+        position: relative;
+        width: 300px;
+        height: 400px;
+        transform-style: preserve-3d;
+        transition: transform 0.5s ease-out;
+    }
+    
+    .card {
+        position: absolute;
+        width: 300px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(5px);
+        border: 3px solid rgba(255, 105, 180, 0.5);
+        transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        cursor: pointer;
+        overflow: hidden;
+        transform-origin: center center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+        z-index: 2;
+        transition: opacity 0.3s;
+    }
+    
+    .card::after {
+        content: '';
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        right: -100%;
+        bottom: -100%;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+    }
+    
+    .card.active {
+        transform: scale(1.2) translateZ(200px);
+        box-shadow: 
+            0 20px 60px rgba(255, 105, 180, 0.6),
+            0 0 30px rgba(255, 105, 180, 0.4);
+        border: 3px solid rgba(255, 255, 255, 0.9);
+    }
+    
+    .card.active::after {
+        opacity: 0.2;
+    }
+    
+    @media (max-width: 768px) {
+        .gallery, .card {
+            width: 240px;
+            height: 320px;
+        }
+    }
+    
+    .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.1);
+        transition: transform 0.5s;
+    }
+    
+    .card:hover img {
+        transform: scale(1.2);
+    }
+    
+    .number {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(255, 105, 180, 0.7);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 3;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        backdrop-filter: blur(5px);
+    }
+    
+    .ambient-light {
+        position: fixed;
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 50% 0%,
+            rgba(255,182,193,0.2) 0%,
+            transparent 50%
+        );
+        z-index: 1;
+    }
+    
+    .title {
+        position: fixed;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 28px;
+        font-family: 'Brush Script MT', cursive;
+        text-shadow: 0 0 10px rgba(255, 105, 180, 0.8);
+        letter-spacing: 2px;
+        z-index: 100;
+        opacity: 0.9;
+        background: rgba(255, 105, 180, 0.2);
+        padding: 10px 25px;
+        border-radius: 30px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
+    }
+    
+    .bottom-text {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 16px;
+        font-family: 'Comic Sans MS', cursive;
+        text-shadow: 0 0 8px rgba(255, 105, 180, 0.8);
+        z-index: 100;
+        width: 80%;
+        text-align: center;
+        opacity: 0.8;
+    }
+    
+    .music-control {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255, 105, 180, 0.4);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        transition: all 0.3s;
+        box-shadow: 0 0 15px rgba(255, 20, 147, 0.5);
+    }
+    
+    .music-control:hover {
+        background: rgba(255, 105, 180, 0.7);
+        transform: scale(1.1);
+    }
+    
+    .placeholder-img {
+        background: linear-gradient(45deg, #ff69b4, #ffc0cb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+   </style>
+</head>
+<body>
+    <div class="title">Our Beautiful Memories</div>
+    <div class="bottom-text">Every moment with you is pure magic ♥</div>
+    <div class="ambient-light"></div>
+    <div class="spotlight"></div>
+    <div class="stars"></div>
+    <div class="hearts"></div>
+    <button class="nav-button prev" aria-label="Previous"></button>
+    <button class="nav-button next" aria-label="Next"></button>
+    <div class="gallery-container">
+        <div class="gallery"></div>
+    </div>
+    <button class="music-control" id="music-toggle" aria-label="Toggle Music">♫</button>
+    <audio id="background-music" loop>
+        <source src="./Perfect-(Mr-Jat.in).mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        function createHearts() {
+            const heartsContainer = document.querySelector('.hearts');
+            for (let i = 0; i < 50; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                
+                // Random size between 5px and 15px
+                const size = 5 + Math.random() * 10;
+                heart.style.width = size + 'px';
+                heart.style.height = size + 'px';
+                
+                // Set random positions and movement
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.bottom = -10 + 'px';
+                
+                // Custom properties for animation
+                heart.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+                heart.style.setProperty('--r', (Math.random() * 90 - 45) + 'deg');
+                heart.style.setProperty('--s', 0.5 + Math.random() * 1.5);
+                
+                // Set animation duration and delay
+                const duration = 10 + Math.random() * 20;
+                heart.style.animationDuration = duration + 's';
+                heart.style.animationDelay = Math.random() * 20 + 's';
+                
+                heartsContainer.appendChild(heart);
+            }
+        }
+        
+        // ...existing code...
+        
+        function createGallery() {
+        const gallery = document.querySelector('.gallery');
+        const totalCards = 10;
+        const radius = window.innerWidth < 768 ? 400 : 600;
+        let currentAngle = 0;
+        let isDragging = false;
+        let startX = 0;
+        let currentX = 0;
+        let autoRotateInterval;
+        
+        const prevButton = document.querySelector('.nav-button.prev');
+        const nextButton = document.querySelector('.nav-button.next');
+        
+        // Array of image URLs
+        const imageUrls = [
+        'pic4.jpeg',
+        'pic1.jpeg',
+        'pic2.jpeg',
+        'pic3.jpeg',
+        'pic4.jpeg',
+        'pic5.jpeg',
+        'pic6.jpeg',
+        'pic7.jpeg',
+        'pic8.jpeg',
+        'pic9.jpeg'
+        ];
+        
+        // Create cards
+        for (let i = 0; i < totalCards; i++) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        if (i === 0) card.classList.add('active');
+        
+        // Calculate the angle of this card
+        const angle = (i / totalCards) * Math.PI * 2;
+        
+        // Calculate position around the circle
+        const x = Math.sin(angle) * radius;
+        const z = Math.cos(angle) * radius;
+        
+        // Position the card
+        card.style.transform = `translateX(${x}px) translateZ(${z}px)`;
+        
+        // Add image element
+        const img = document.createElement('img');
+        img.src = imageUrls[i];
+        card.appendChild(img);
+        
+        // Add number badge
+        const number = document.createElement('div');
+        number.className = 'number';
+        number.textContent = (i + 1).toString();
+        card.appendChild(number);
+        
+        gallery.appendChild(card);
+        }
+        
+        // Update rotation
+        function updateRotation() {
+        gallery.style.transform = `rotateY(${currentAngle}deg)`;
+        
+        // Update active card
+        const cards = document.querySelectorAll('.card');
+        const activeIndex = Math.round((-currentAngle / 360) * totalCards) % totalCards;
+        
+        cards.forEach((card, index) => {
+            if (index === (activeIndex + totalCards) % totalCards) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+        }
+        
+        // Navigation buttons
+        prevButton.addEventListener('click', () => {
+        currentAngle += (360 / totalCards);
+        updateRotation();
+        clearInterval(autoRotateInterval);
+        startAutoRotate();
+        });
+        
+        nextButton.addEventListener('click', () => {
+        currentAngle -= (360 / totalCards);
+        updateRotation();
+        clearInterval(autoRotateInterval);
+        startAutoRotate();
+        });
+        
+        // Touch/mouse events for dragging
+        document.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        currentX = e.clientX;
+        clearInterval(autoRotateInterval);
+        document.body.style.cursor = 'grabbing';
+        });
+        
+        document.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        startX = e.touches[0].clientX;
+        currentX = e.touches[0].clientX;
+        clearInterval(autoRotateInterval);
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const delta = e.clientX - currentX;
+            currentAngle += delta * 0.5;
+            currentX = e.clientX;
+            updateRotation();
+        }
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+        if (isDragging) {
+            const delta = e.touches[0].clientX - currentX;
+            currentAngle += delta * 0.5;
+            currentX = e.touches[0].clientX;
+            updateRotation();
+        }
+        });
+        
+        document.addEventListener('mouseup', () => {
+        isDragging = false;
+        document.body.style.cursor = 'default';
+        startAutoRotate();
+        });
+        
+        document.addEventListener('touchend', () => {
+        isDragging = false;
+        startAutoRotate();
+        });
+        
+        // Automatic rotation
+        function startAutoRotate() {
+        autoRotateInterval = setInterval(() => {
+            currentAngle -= 0.2;
+            updateRotation();
+        }, 30);
+        }
+        
+        // Spotlight effect follows mouse
+        document.addEventListener('mousemove', (e) => {
+        const spotlight = document.querySelector('.spotlight');
+        spotlight.style.left = e.clientX + 'px';
+        spotlight.style.top = e.clientY + 'px';
+        });
+        
+        // Music control
+        const musicToggle = document.getElementById('music-toggle');
+        const backgroundMusic = document.getElementById('background-music');
+        let isMusicPlaying = false;
+        
+        musicToggle.addEventListener('click', () => {
+        if (isMusicPlaying) {
+            backgroundMusic.pause();
+            musicToggle.innerHTML = '♫';
+            musicToggle.style.background = 'rgba(255, 105, 180, 0.4)';
+        } else {
+            backgroundMusic.play();
+            musicToggle.innerHTML = '◼';
+            musicToggle.style.background = 'rgba(255, 105, 180, 0.7)';
+        }
+        isMusicPlaying = !isMusicPlaying;
+        });
+        
+        // Initialize
+        updateRotation();
+        startAutoRotate();
+        }
+        
+        // Initialize everything when the page loads
+        window.addEventListener('DOMContentLoaded', () => {
+        createStars();
+        createHearts();
+        createGallery();
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+        // Recreate gallery for new screen size
+        document.querySelector('.gallery').innerHTML = '';
+        createGallery();
+        });
+        });
+        // ...existing code...
+    </script>
+    
+        
+    
+</body>
+</html>
